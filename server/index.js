@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 
 const mongoose  = require("mongoose");
 
@@ -8,7 +9,17 @@ const PORT = process.env.PORT | 3001;
 
 const app = express();
 
-const db = "mongodb+srv://nishantpriya:nishantpriya@clusterdocusync.eqo1rxa.mongodb.net/?appName=Clusterdocusync";
+
+mongoose.connect(process.env.MONGO_URI);
+
+app.post('/api/signup', (req, res)=>{
+
+})
+
+app.get('/api/get', (req, res)=>{
+    
+})
+
 mongoose.connect(db).then(() => {
     console.log("mongo connection succesful");
     
