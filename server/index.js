@@ -2,6 +2,7 @@ const express = require("express");
 require("dotenv").config();
 
 const mongoose  = require("mongoose");
+const authrouter = require("./routes/auth");
 
 
 const PORT = process.env.PORT | 3001;
@@ -10,17 +11,22 @@ const PORT = process.env.PORT | 3001;
 const app = express();
 
 
-mongoose.connect(process.env.MONGO_URI);
+// mongoose.connect(process.env.MONGO_URI);
 
-app.post('/api/signup', (req, res)=>{
+// app.post('/api/signup', (req, res)=>{
 
-})
+// })
 
-app.get('/api/get', (req, res)=>{
+// app.get('/api/get', (req, res)=>{
     
-})
+// })
 
-mongoose.connect(db).then(() => {
+app.use(express.json())
+app.use(authrouter);
+
+
+
+mongoose.connect(process.env.MONGO_URI).then(() => {
     console.log("mongo connection succesful");
     
 }).catch((e)=> {

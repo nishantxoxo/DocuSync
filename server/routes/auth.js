@@ -19,7 +19,11 @@ authrouter.post('/api/signup', async (req, res) =>{
                 });
                 user  = await user.save()
             }
-    } catch (error) {
-        
+
+            res.json({ user: user})
+    } catch (er) {
+        res.status(500).json({error: er.message});
     }
 })
+
+module.exports = authrouter
