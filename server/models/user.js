@@ -12,12 +12,12 @@ const userSchema = mongoose.Schema({
         trim: true
     },
 
-    ProfilePic: {
+    profilePic: {
         type: String, 
-        required: true,
+        // required: true,
     }
 
-
+//
 })
 
 const User = mongoose.model("User", userSchema)
