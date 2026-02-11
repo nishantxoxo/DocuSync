@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:docu_sync/constants.dart';
 import 'package:docu_sync/models/error_model.dart';
 import 'package:docu_sync/models/user_model.dart';
+import 'package:docu_sync/repository/local_storage_repository.dart';
 import 'package:docu_sync/tokens.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +16,7 @@ final AuthRepositoryProvider = Provider((ref) => AuthRepository(googleSignIn: Go
   clientId: kIsWeb ?webtoken:null,
     scopes: ['email', 'profile'],
     
-    ), client: Client()));
+    ), client: Client(), localStorageRepository: LocalStorageRepository()));
 
 
 
@@ -27,10 +28,12 @@ final userProvider = StateProvider<UserModel?>((ref) => null);
 class AuthRepository {
   final GoogleSignIn _googleSignIn;
   final Client _client;
+  final LocalStorageRepository _localStorageRepository;
   AuthRepository({
     required  GoogleSignIn googleSignIn,
-    required Client client
-  }): _googleSignIn = googleSignIn, _client = client;
+    required Client client,
+    required LocalStorageRepository localStorageRepository,
+  }): _googleSignIn = googleSignIn, _client = client, _localStorageRepository = localStorageRepository;
 
   
 
@@ -87,9 +90,11 @@ class AuthRepository {
       switch(res.statusCode){
         case 200:
         final newUser = useracc.copyWith(
-          uid: jsonDecode(res.body)['user']['_id']
+          uid: jsonDecode(res.body)['user']['_id'],
+          token: jsonDecode(res.body)['token']
         );
         error = ErrorModel(error: null, data: newUser);
+        _localStorageRepository.setToken(newUser.token);
        debugPrint("  3 POST ");
        print("  3 POST ");
 
@@ -107,4 +112,53 @@ class AuthRepository {
     }
     return error;
   }
+
+
+
+  Future<ErrorModel> getUserData() async {
+    debugPrint('signInWithGoogle() CALLED');
+    ErrorModel error = ErrorModel(error: 'some unexpected error occured', data: null);
+    try {
+
+        String? token = await _localStorageRepository.getToken();
+        if(token != null){
+          var res = await _client.post(Uri.parse("$host/api/signup"), 
+       
+         headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'x-auth-token': token,
+          }
+      );
+switch(res.statusCode){
+        case 200:
+        final newUser = UserModel.fromJson( jsonEncode(jsonDecode(res.body)['user']) ).copyWith(token: token);
+        error = ErrorModel(error: null, data: newUser);
+        _localStorageRepository.setToken(newUser.token);
+       debugPrint("  3 POST ");
+       print("  3 POST ");
+
+        break;
+        
+
+        default:
+        throw 'some error occured';
+      }
+
+
+        }
+
+     
+     
+      
+    }
+    
+    
+    catch (e) {
+       error = ErrorModel(error: e.toString(), data: null);
+    }
+    return error;
+  }
+
+
+  
 }

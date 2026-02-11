@@ -1,3 +1,4 @@
+import 'package:docu_sync/models/error_model.dart';
 import 'package:docu_sync/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,10 +7,29 @@ void main() {
   runApp(ProviderScope(child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
+  @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
   // This widget is the root of your application.
+  ErrorModel? errorModel;
+  
+  @override
+  void initState() {
+    // TODO: implement initState
+    
+    
+    super.initState();
+    getUserData();
+  }
+  void getUserData( ) async {
+    errorModel = 
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
