@@ -1,4 +1,6 @@
 import 'package:docu_sync/models/error_model.dart';
+import 'package:docu_sync/repository/auth_repository.dart';
+import 'package:docu_sync/screens/home_screen.dart';
 import 'package:docu_sync/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,11 +29,15 @@ class _MyAppState extends ConsumerState<MyApp> {
     getUserData();
   }
   void getUserData( ) async {
-    errorModel = 
+    errorModel = await ref.read(AuthRepositoryProvider).getUserData();
+    if(errorModel != null && errorModel!.data != null){
+      ref.read(userProvider.notifier).update( (state)=> errorModel!.data);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -52,7 +58,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const LoginScreen(),
+      home: user == null ? LoginScreen() : HomeScreen(),
     );
   }
 }

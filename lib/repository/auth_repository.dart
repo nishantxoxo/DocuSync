@@ -116,22 +116,28 @@ class AuthRepository {
 
 
   Future<ErrorModel> getUserData() async {
-    debugPrint('signInWithGoogle() CALLED');
+    debugPrint('getUserData()  CALLED');
     ErrorModel error = ErrorModel(error: 'some unexpected error occured', data: null);
     try {
 
         String? token = await _localStorageRepository.getToken();
+   
         if(token != null){
-          var res = await _client.post(Uri.parse("$host/api/signup"), 
+          var res = await _client.get(Uri.parse("$host/"), 
        
          headers: {
             'Content-Type': 'application/json; charset=UTF-8',
             'x-auth-token': token,
           }
       );
+
 switch(res.statusCode){
         case 200:
-        final newUser = UserModel.fromJson( jsonEncode(jsonDecode(res.body)['user']) ).copyWith(token: token);
+  
+
+        final newUser = UserModel.fromMap( jsonDecode(res.body)['user'] ).copyWith(token: token);
+      print("2");
+
         error = ErrorModel(error: null, data: newUser);
         _localStorageRepository.setToken(newUser.token);
        debugPrint("  3 POST ");

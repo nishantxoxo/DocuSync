@@ -31,7 +31,7 @@ class UserModel {
       email: map['email'] as String,
       profilePic: map['profilePic'] as String,
       uid: map['_id'] as String,
-      token: map['token'] as String,
+      token: "", //injected later
     );
   }
 
