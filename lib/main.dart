@@ -1,9 +1,11 @@
 import 'package:docu_sync/models/error_model.dart';
 import 'package:docu_sync/repository/auth_repository.dart';
+import 'package:docu_sync/router.dart';
 import 'package:docu_sync/screens/home_screen.dart';
 import 'package:docu_sync/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:routemaster/routemaster.dart';
 
 void main() {
   runApp(ProviderScope(child: const MyApp()));
@@ -37,8 +39,18 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
-    return MaterialApp(
+    
+    return MaterialApp.router(
+      routeInformationParser: RoutemasterParser()  ,
+      routerDelegate: RoutemasterDelegate(routesBuilder: (context){
+          final user = ref.watch(userProvider);
+          if(user!=null && user.token.isNotEmpty){
+              return loggedInRoute;
+          }
+          return loggedOutRoute;
+
+
+      }),
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -58,7 +70,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: user == null ? LoginScreen() : HomeScreen(),
+      // home: user == null ? LoginScreen() : HomeScreen(),
     );
   }
 }

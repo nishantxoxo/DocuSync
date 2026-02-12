@@ -62,7 +62,7 @@ class AuthRepository {
       if(user != null){
         debugPrint(" name - ${user.displayName??"no name"}");
         print("EMAILL - ${user.email??"no email"}");
-        print("EMAILL - ${user.photoUrl??"no photo"}");
+        print("photo - ${user.photoUrl??"no photo"}");
        
 
         
@@ -121,6 +121,7 @@ class AuthRepository {
     try {
 
         String? token = await _localStorageRepository.getToken();
+      print(token);
    
         if(token != null){
           var res = await _client.get(Uri.parse("$host/"), 
@@ -134,6 +135,7 @@ class AuthRepository {
 switch(res.statusCode){
         case 200:
   
+      print("1");
 
         final newUser = UserModel.fromMap( jsonDecode(res.body)['user'] ).copyWith(token: token);
       print("2");
