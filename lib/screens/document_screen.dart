@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DocumentScreen extends ConsumerStatefulWidget {
-  // string id;
+ final String id;
 
-  const DocumentScreen({super.key});
+  const DocumentScreen({super.key,
+  required this.id
+  });
 
   @override
   ConsumerState<DocumentScreen> createState() => _DocumentScreenState();
@@ -13,6 +15,6 @@ class DocumentScreen extends ConsumerStatefulWidget {
 class _DocumentScreenState extends ConsumerState<DocumentScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(body: Center(child: Text(widget.id),),);
   }
 }
