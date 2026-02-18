@@ -47,7 +47,12 @@ void createDocument(WidgetRef ref, BuildContext ct) async{
 
         ],
       ),
-      body: Center(child: Text(ref.watch(userProvider)!.uid ?? "wtf"),),
+      body: FutureBuilder(future: ref.watch(documentRepositoryProvider).getDocuments(ref.watch(userProvider)!.token),
+       builder: (context, snapshot) {
+         if(snapshot.connectionState  == ConnectionState.waiting){
+          
+         }
+       },),
     );
   }
 }

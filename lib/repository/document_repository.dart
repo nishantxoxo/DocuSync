@@ -16,6 +16,46 @@ class DocumentRepository {
 
   DocumentRepository({required Client client}): _client = client ;
 
+
+  Future<ErrorModel> getDocuments(String token) async {
+     debugPrint('getDocuments()  CALLED');
+    ErrorModel error = ErrorModel(error: 'some unexpected error occured', data: null);
+    try {
+    
+          var res = await _client.get(Uri.parse("$host/docs/me"), 
+       
+         headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'x-auth-token': token,
+          },
+         
+      );
+
+    switch(res.statusCode){
+        case 200:
+        List<DocumentModel> docs = [];
+        for(int i = 0; i < jsonDecode(res.body).length ; i++){
+          docs.add(DocumentModel.fromJson(jsonEncode(jsonDecode(res.body)[i]))   );
+        }
+        error = ErrorModel(error: null, data: docs);
+      
+        break;
+        
+        default:
+        error = ErrorModel(error: res.body, data: null);
+      }
+
+    }
+  
+    catch (e) {
+       error = ErrorModel(error: e.toString(), data: null);
+    }
+    return error;
+  }
+
+
+
+
   Future<ErrorModel> createDocument(String token) async {
      debugPrint('createDocument()  CALLED');
     ErrorModel error = ErrorModel(error: 'some unexpected error occured', data: null);
@@ -32,7 +72,7 @@ class DocumentRepository {
           })
       );
 
-switch(res.statusCode){
+    switch(res.statusCode){
         case 200:
 
         error = ErrorModel(error: null, data: DocumentModel.fromJson(res.body));
