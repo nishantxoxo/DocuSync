@@ -1,4 +1,6 @@
 import 'package:docu_sync/colors.dart';
+import 'package:docu_sync/common/widgets/loader.dart';
+import 'package:docu_sync/models/document.dart';
 import 'package:docu_sync/models/error_model.dart';
 import 'package:docu_sync/repository/auth_repository.dart';
 import 'package:docu_sync/repository/document_repository.dart';
@@ -47,11 +49,27 @@ void createDocument(WidgetRef ref, BuildContext ct) async{
 
         ],
       ),
-      body: FutureBuilder(future: ref.watch(documentRepositoryProvider).getDocuments(ref.watch(userProvider)!.token),
+      body: FutureBuilder<ErrorModel>(future: ref.watch(documentRepositoryProvider).getDocuments(ref.watch(userProvider)!.token),
        builder: (context, snapshot) {
          if(snapshot.connectionState  == ConnectionState.waiting){
-          
+            return Loader();
          }
+
+         return Center(
+           child: SizedBox(
+            width: 600,
+             child: ListView.builder(itemBuilder: (context, index) {
+               DocumentModel docc = snapshot.data!.data[index];
+             
+               return SizedBox(
+                height: 50,
+                 child: Card(
+                  child: Center(child: Text(docc.title, style: TextStyle(fontSize: 17),),),
+                 ),
+               );
+             }, itemCount: snapshot.data!.data.length,),
+           ),
+         );
        },),
     );
   }
