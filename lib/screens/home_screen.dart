@@ -36,6 +36,11 @@ void createDocument(WidgetRef ref, BuildContext ct) async{
 
 }
 
+  void navigateToDocument(BuildContext context, String documentId){
+    Routemaster.of(context).push('/document/$documentId');
+  }
+
+
   @override
   Widget build(BuildContext context, WidgetRef ref) { 
       return Scaffold(
@@ -56,15 +61,19 @@ void createDocument(WidgetRef ref, BuildContext ct) async{
          }
 
          return Center(
-           child: SizedBox(
+           child: Container(
+            margin: const EdgeInsets.only(top: 10),
             width: 600,
              child: ListView.builder(itemBuilder: (context, index) {
                DocumentModel docc = snapshot.data!.data[index];
              
-               return SizedBox(
-                height: 50,
-                 child: Card(
-                  child: Center(child: Text(docc.title, style: TextStyle(fontSize: 17),),),
+               return InkWell(
+                onTap: () =>navigateToDocument(context, docc.id),
+                 child: SizedBox(
+                  height: 50,
+                   child: Card(
+                    child: Center(child: Text(docc.title, style: TextStyle(fontSize: 17),),),
+                   ),
                  ),
                );
              }, itemCount: snapshot.data!.data.length,),
