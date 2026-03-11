@@ -53,7 +53,41 @@ class DocumentRepository {
     return error;
   }
 
+ Future<ErrorModel> getDocumentbyId(String token) async {
+     debugPrint('getDocuments()  CALLED');
+    ErrorModel error = ErrorModel(error: 'some unexpected error occured', data: null);
+    try {
+    
+          var res = await _client.get(Uri.parse("$host/docs/me"), 
+       
+         headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'x-auth-token': token,
+          },
+         
+      );
 
+    switch(res.statusCode){
+        case 200:
+        List<DocumentModel> docs = [];
+        for(int i = 0; i < jsonDecode(res.body).length ; i++){
+          docs.add(DocumentModel.fromJson(jsonEncode(jsonDecode(res.body)[i]))   );
+        }
+        error = ErrorModel(error: null, data: docs);
+      
+        break;
+        
+        default:
+        error = ErrorModel(error: res.body, data: null);
+      }
+
+    }
+  
+    catch (e) {
+       error = ErrorModel(error: e.toString(), data: null);
+    }
+    return error;
+  }
 
 
   Future<ErrorModel> createDocument(String token) async {
@@ -91,4 +125,29 @@ class DocumentRepository {
     return error;
   }
 
-}
+
+//TODO do error handling
+  void updateDocumentTitle({required String token, required String id, required String title,}) async {
+     debugPrint('updateDocumentTitle()  CALLED');
+    // ErrorModel error = ErrorModel(error: 'some unexpected error occured', data: null);
+    
+    
+          var res = await _client.post(Uri.parse("$host/doc/title"), 
+       
+         headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'x-auth-token': token,
+          },
+          body: jsonEncode( {
+            'id': id,
+            'title' : title,
+          })
+      );
+
+   
+  
+
+
+
+
+}}
