@@ -46,7 +46,7 @@ documentRouter.get('/docs/me', auth, async (req, res) => {
 })
 
 
-documentRouter.get('/docs/:id', auth, async (req, res) => {
+documentRouter.get('/doc/:id', auth, async (req, res) => {
     try {
         const docs = await Document.find(req.params.id)
         res.json(docs)

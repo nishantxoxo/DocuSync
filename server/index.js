@@ -4,6 +4,7 @@ require("dotenv").config();
 const mongoose  = require("mongoose");
 const authrouter = require("./routes/auth");
 const cors = require("cors");
+const http = require('http');
 const documentRouter = require("./routes/document");
 
 
@@ -11,6 +12,11 @@ const PORT = process.env.PORT | 3001;
 
 
 const app = express();
+var server = http.createServer(app);
+
+var io = require('socket.io')(server);
+
+
 
 
 // mongoose.connect(process.env.MONGO_URI);
@@ -39,6 +45,18 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 })
 
 
-app.listen(PORT, "0.0.0.0" , ()=>{
+io.on('connection', (sock) => {
+    sock.on('join', (docId) => {
+        sock.join(docId)
+    console.log("doc joined");
+
+    })
+
+    console.log("sock connected" + sock.id);
+} )
+
+
+
+server.listen(PORT, "0.0.0.0" , ()=>{
     console.log("connected at port 3001")
 })

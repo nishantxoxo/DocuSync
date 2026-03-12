@@ -1,6 +1,9 @@
 import 'package:docu_sync/colors.dart';
+import 'package:docu_sync/models/document.dart';
+import 'package:docu_sync/models/error_model.dart';
 import 'package:docu_sync/repository/auth_repository.dart';
 import 'package:docu_sync/repository/document_repository.dart';
+import 'package:docu_sync/repository/socket_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +22,33 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
   TextEditingController titleController = TextEditingController(
     text: "Untitled Document",
   );
+  ErrorModel? err;
 
+  SocketRepository socketRepository = SocketRepository();
+
+
+
+
+
+  @override
+  void initState() {
+  
+    super.initState();
+    socketRepository.joinRoom(widget.id);
+    fetchDocData();
+  }
+
+void fetchDocData() async {
+   err = await ref.read(documentRepositoryProvider).getDocumentbyId(ref.read(userProvider)!.token, widget.id);
+
+
+   if (err!.data!=null){
+    titleController.text = (err!.data as DocumentModel).title;
+    setState(() {
+      
+    });
+   }
+}
 
   void updateTitle(WidgetRef ref,  String title){
       ref.read(documentRepositoryProvider).updateDocumentTitle(token: ref.read(userProvider)!.token, id: widget.id, title: title);

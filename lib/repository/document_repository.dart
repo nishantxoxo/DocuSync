@@ -53,12 +53,12 @@ class DocumentRepository {
     return error;
   }
 
- Future<ErrorModel> getDocumentbyId(String token) async {
-     debugPrint('getDocuments()  CALLED');
+ Future<ErrorModel> getDocumentbyId(String token, String id) async {
+     debugPrint('getDocumentbyId()  CALLED');
     ErrorModel error = ErrorModel(error: 'some unexpected error occured', data: null);
     try {
     
-          var res = await _client.get(Uri.parse("$host/docs/me"), 
+          var res = await _client.get(Uri.parse("$host/docs/${id}"), 
        
          headers: {
             'Content-Type': 'application/json; charset=UTF-8',
@@ -69,16 +69,12 @@ class DocumentRepository {
 
     switch(res.statusCode){
         case 200:
-        List<DocumentModel> docs = [];
-        for(int i = 0; i < jsonDecode(res.body).length ; i++){
-          docs.add(DocumentModel.fromJson(jsonEncode(jsonDecode(res.body)[i]))   );
-        }
-        error = ErrorModel(error: null, data: docs);
+        error = ErrorModel(error: null, data: DocumentModel.fromJson(res.body));
       
         break;
         
         default:
-        error = ErrorModel(error: res.body, data: null);
+        throw 'this doc doesnt exist, please create a new one';
       }
 
     }
