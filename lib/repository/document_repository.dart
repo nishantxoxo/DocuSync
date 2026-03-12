@@ -58,15 +58,15 @@ class DocumentRepository {
     ErrorModel error = ErrorModel(error: 'some unexpected error occured', data: null);
     try {
     
-          var res = await _client.get(Uri.parse("$host/docs/${id}"), 
-       
+          var res = await _client.get(Uri.parse("$host/doc/$id"), 
+          
          headers: {
             'Content-Type': 'application/json; charset=UTF-8',
             'x-auth-token': token,
           },
          
       );
-
+      print(token);
     switch(res.statusCode){
         case 200:
         error = ErrorModel(error: null, data: DocumentModel.fromJson(res.body));

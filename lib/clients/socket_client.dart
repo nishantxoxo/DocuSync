@@ -17,6 +17,17 @@ class SocketClient {
     });
 
     socket!.connect();
+    socket!.onConnect((_) {
+      print("Socket connected");
+    });
+
+    socket!.onDisconnect((_) {
+      print("Socket disconnected");
+    });
+
+    socket!.onError((err) {
+      print("Socket error: $err");
+    });
   }
 
 

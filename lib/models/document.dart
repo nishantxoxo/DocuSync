@@ -4,7 +4,7 @@ import 'dart:convert';
 class DocumentModel {
   final String title;
   final String uid;
-  final List content;
+  final List<dynamic> content;
 
   final DateTime createdAt;
   final String id;
@@ -28,7 +28,7 @@ class DocumentModel {
     return DocumentModel(
       title: map['title'] as String,
       uid: map['uid'] as String,
-      content: List.from(map['content'] as List),
+      content: List<dynamic>.from(map['content'] ?? []),
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
       id: map['_id'] as String,
     );

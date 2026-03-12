@@ -30,7 +30,7 @@ documentRouter.post('/doc/title', auth, async (req, res)=> {
 
         res.json(document);
     } catch (error) {
-        res.status(500).json({error: er.message});
+        res.status(500).json({error: error.message});
         // res.status(500).j
     }
 });
@@ -48,7 +48,7 @@ documentRouter.get('/docs/me', auth, async (req, res) => {
 
 documentRouter.get('/doc/:id', auth, async (req, res) => {
     try {
-        const docs = await Document.find(req.params.id)
+        const docs = await Document.findById(req.params.id)//
         res.json(docs)
     } catch (error) {
         res.status(500).json({error: error.message})

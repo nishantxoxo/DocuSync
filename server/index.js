@@ -6,6 +6,7 @@ const authrouter = require("./routes/auth");
 const cors = require("cors");
 const http = require('http');
 const documentRouter = require("./routes/document");
+const Document = require("./models/document");
 
 
 const PORT = process.env.PORT | 3001;
@@ -52,10 +53,33 @@ io.on('connection', (sock) => {
 
     })
 
+
+    sock.on('typing', (data) => {
+        sock.broadcast.to(data.room).emit('changes', data); 
+    })
+
+    sock.on('save', async (data) => {
+        console.log("Saver recieved");
+        
+        await saver(data);
+    })
+
     console.log("sock connected" + sock.id);
 } )
 
 
+const saver = async (data) => {
+    try {
+        const document = await Document.findByIdAndUpdate(
+            data.room,
+            { content: data.delta },
+            
+        );
+
+    } catch (err) {
+        console.log(err);
+    }
+};
 
 server.listen(PORT, "0.0.0.0" , ()=>{
     console.log("connected at port 3001")
