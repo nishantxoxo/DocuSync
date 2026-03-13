@@ -3,6 +3,7 @@ import 'package:docu_sync/repository/auth_repository.dart';
 import 'package:docu_sync/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:routemaster/routemaster.dart';
 
 class LoginScreen extends ConsumerWidget {
@@ -36,14 +37,31 @@ class LoginScreen extends ConsumerWidget {
 
     return Scaffold(
       body: Center(
-        child: ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size(150, 50),
-            backgroundColor: kWhiteColor
-          ),
-          onPressed: ()=> signInWithGoogle(ref, context),
-          label: Text("Sign in with Google", style:  TextStyle( color: kBlackColor),),
-          icon: Image.asset('assets/images/g-logo-2.png', height: 20,),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/images/docs-logo.png', height:150,),
+            SizedBox(height: 5,),
+
+            Text("Welcome To DocuSync", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 25),),
+            SizedBox(height: 8,),
+            Text("A real time collaborative platform", style:  GoogleFonts.roboto(fontSize: 15, ),),
+            SizedBox(height: 8,),
+
+
+            ElevatedButton.icon(
+              
+              style: ElevatedButton.styleFrom(
+              
+              elevation:5 ,
+                minimumSize: const Size(150, 50),
+                backgroundColor: kWhiteColor
+              ),
+              onPressed: ()=> signInWithGoogle(ref, context),
+              label: Text("Sign in with Google", style:  TextStyle( color: kBlackColor),),
+              icon: Image.asset('assets/images/g-logo-2.png', height: 20,),
+            ),
+          ],
         ),
       ),
     );

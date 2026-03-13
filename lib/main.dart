@@ -63,6 +63,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        // scaffoldBackgroundColor: Colors.white,
         // This is the theme of your application.
         //
         // TRY THIS: Try running your application with "flutter run". You'll see
@@ -78,7 +79,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
       ),
       // home: user == null ? LoginScreen() : HomeScreen(),
     );

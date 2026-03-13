@@ -22,9 +22,20 @@ class SocketRepository {
   }
 
   void autoSave(Map<String, dynamic> data){
-    print("auto saver called" );
+    // print("auto saver called" );
     _socketClient.emit('save', data);
   }
 
 
+  void sendChat(Map<String, dynamic> data) {
+  _socketClient.emit("chat", data);
+}
+
+void chatListener(Function(dynamic) callback) {
+  _socketClient.on("chat", callback);
+}
+
+void removeChatListener() {
+  _socketClient.off("chat");
+}
 }

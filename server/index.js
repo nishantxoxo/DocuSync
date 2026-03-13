@@ -59,10 +59,17 @@ io.on('connection', (sock) => {
     })
 
     sock.on('save', async (data) => {
-        console.log("Saver recieved");
+        // console.log("Saver recieved");
         
         await saver(data);
     })
+
+
+    sock.on('chat', (data) => {
+        // console.log("chat recieved");
+        
+    io.to(data.room).emit('chat', data);
+    });
 
     console.log("sock connected" + sock.id);
 } )

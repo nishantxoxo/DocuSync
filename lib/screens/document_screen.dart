@@ -7,6 +7,7 @@ import 'package:docu_sync/models/error_model.dart';
 import 'package:docu_sync/repository/auth_repository.dart';
 import 'package:docu_sync/repository/document_repository.dart';
 import 'package:docu_sync/repository/socket_repository.dart';
+import 'package:docu_sync/widgets/chat_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
@@ -31,7 +32,7 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
   ErrorModel? err;
 
   SocketRepository socketRepository = SocketRepository();
-
+bool showChat = false;
   Timer? _timer;
 
 @override
@@ -65,7 +66,7 @@ void dispose() {
 
    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
   if (_controller != null) {
-    print("saving something");
+    // print("saving something");
 
     socketRepository.autoSave({
       'room': widget.id,
@@ -131,6 +132,17 @@ void dispose() {
       return Scaffold(body: Loader());
     }
     return Scaffold(
+
+  floatingActionButton: FloatingActionButton(
+  backgroundColor: kBlueColor,
+  child: const Icon(Icons.chat, color: kWhiteColor,),
+  onPressed: () {
+    setState(() {
+      showChat = !showChat;
+    });
+  },
+),
+
       appBar: AppBar(
         backgroundColor: kWhiteColor,
         elevation: 0,
@@ -144,8 +156,8 @@ void dispose() {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("link copied")));
                 },);
               },
-              label: Text("Share"),
-              icon: Icon(Icons.lock, size: 16),
+              label: Text("Share", style: TextStyle(color: kWhiteColor),),
+              icon: Icon(Icons.lock, size: 16, color: kWhiteColor,),
             ),
           ),
         ],
@@ -155,7 +167,7 @@ void dispose() {
             children: [
               GestureDetector( onTap: () {
                 Routemaster.of(context).replace('/');
-              }, child: Image.asset('assets/images/docs-logo.png', height: 40)),
+              }, child: Image.asset('assets/images/docs-logo.png', height: 50)),
               SizedBox(width: 10),
               SizedBox(
                 width: 200,
@@ -183,35 +195,49 @@ void dispose() {
           ),
         ),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
-            quill.QuillSimpleToolbar(
-              controller: _controller!,
-              config: const quill.QuillSimpleToolbarConfig(),
-            ),
-            const SizedBox(height: 10),
-
-            Expanded(
-              child: SizedBox(
-                width: 750,
-                child: Card(
-                  color: kWhiteColor,
-                  elevation: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.all(40.0),
-                    child: quill.QuillEditor.basic(
-                      controller: _controller!,
-                      
-                      config: const quill.QuillEditorConfig(),
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                quill.QuillSimpleToolbar(
+                  controller: _controller!,
+                  config: const quill.QuillSimpleToolbarConfig(),
+                ),
+                const SizedBox(height: 10),
+          
+                Expanded(
+                  child: SizedBox(
+                    width: 750,
+                    child: Card(
+                      color: kWhiteColor,
+                      elevation: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.all(40.0),
+                        child: quill.QuillEditor.basic(
+                          controller: _controller!,
+                          
+                          config: const quill.QuillEditorConfig(),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
+
+          if (showChat)
+      Positioned(
+        bottom: 80,
+        right: 20,
+        child: ChatBox(
+          socketRepository: socketRepository,
+          docId: widget.id, user:  ref.read(userProvider)!
         ),
+      ),
+        ],
       ),
     );
   }
