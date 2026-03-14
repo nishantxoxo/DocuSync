@@ -7,7 +7,7 @@ const cors = require("cors");
 const http = require('http');
 const documentRouter = require("./routes/document");
 const Document = require("./models/document");
-
+const multer = require("multer");
 
 const PORT = process.env.PORT | 3001;
 
@@ -34,6 +34,34 @@ app.use(express.json())
 app.use(authrouter);
 app.use(documentRouter);
 
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
+
+
+app.post("/files/upload/:docId", upload.single("file"), (req, res) => {
+  const docId = req.params.docId;
+
+  const fileData = {
+    name: req.file.originalname,
+    path: req.file.filename,
+     size: req.file.size,
+    uploadedAt: new Date(),
+  };
+
+  io.to(docId).emit("file_shared", fileData);
+
+  res.json(fileData);
+});
+app.use("/uploads", express.static("uploads"));
 
 
 
@@ -70,6 +98,10 @@ io.on('connection', (sock) => {
         
     io.to(data.room).emit('chat', data);
     });
+
+
+
+    
 
     console.log("sock connected" + sock.id);
 } )

@@ -38,4 +38,9 @@ void chatListener(Function(dynamic) callback) {
 void removeChatListener() {
   _socketClient.off("chat");
 }
+
+
+void fileListener(Function(dynamic) callback) {
+  _socketClient.on("file_shared", callback);
+}
 }

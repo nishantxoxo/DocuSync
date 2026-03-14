@@ -147,6 +147,13 @@ void dispose() {
         backgroundColor: kWhiteColor,
         elevation: 0,
         actions: [
+          IconButton(
+              icon: const Icon(Icons.folder, color: kBlackColor),
+              onPressed: () {
+                Routemaster.of(context).push('/document/${widget.id}/files');
+              },
+            ),
+
           Padding(
             padding: EdgeInsets.all(10),
             child: ElevatedButton.icon(

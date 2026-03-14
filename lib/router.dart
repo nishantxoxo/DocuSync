@@ -1,3 +1,4 @@
+import 'package:docu_sync/screens/FileShareScreen.dart';
 import 'package:docu_sync/screens/document_screen.dart';
 import 'package:docu_sync/screens/home_screen.dart';
 import 'package:docu_sync/screens/login_screen.dart';
@@ -10,5 +11,12 @@ final loggedOutRoute = RouteMap(routes: {
 
 final loggedInRoute = RouteMap(routes: {
     '/': (route) => const MaterialPage(child: HomeScreen()),
-    '/document/:id' :  (route)=>  MaterialPage(child: DocumentScreen(id: route.pathParameters['id'] ?? ''))
+    '/document/:id' :  (route)=>  MaterialPage(child: DocumentScreen(id: route.pathParameters['id'] ?? '')),
+
+    '/document/:id/files': (route) {
+  final id = route.pathParameters['id']!;
+  return MaterialPage(
+    child: FileShareScreen(documentId: id),
+  );
+},
 });
