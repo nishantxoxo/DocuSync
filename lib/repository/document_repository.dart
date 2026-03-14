@@ -140,10 +140,37 @@ class DocumentRepository {
           })
       );
 
-   
-  
+  }
+
+
+Future<void> deleteDocument({
+  required String token,
+  required String id,
+}) async {
+  try {
+    final res = await _client.delete(
+      Uri.parse('$host/doc/delete/$id'),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': token,
+      },
+    );
+
+    // httpErrorHandle(
+    //   response: res,
+    //   onSuccess: () {},
+    // );
+  } catch (e) {
+    print(e);
+  }
+}
 
 
 
 
-}}
+
+
+
+
+
+}

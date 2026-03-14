@@ -55,4 +55,25 @@ documentRouter.get('/doc/:id', auth, async (req, res) => {
     }
 })
 
+
+documentRouter.delete('/doc/delete/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const document = await Document.findByIdAndDelete(id);
+
+    if (!document) {
+      return res.status(404).json({ msg: "Document not found" });
+    }
+
+    res.json({ msg: "Document deleted successfully" });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+
 module.exports = documentRouter;

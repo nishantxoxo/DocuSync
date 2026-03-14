@@ -11,174 +11,230 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:routemaster/routemaster.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
-  void signOut(WidgetRef ref){
-    ref.read(AuthRepositoryProvider).signOut();
-    ref.read(userProvider.notifier).update(( state ) => null);
-  }
-
-void createDocument(WidgetRef ref, BuildContext ct) async{
-  String token = ref.read(userProvider)!.token;
-
-  final navigator = Routemaster.of(ct);
-  final snackBar = ScaffoldMessenger.of(ct);
-
-  final ErrorModel =  await ref.read(documentRepositoryProvider).createDocument(token);
-
-  if(ErrorModel.data != null){
-    navigator.push('/document/${ErrorModel.data.id}');
-
-  }
-
-  else{
-    snackBar.showSnackBar(SnackBar(content: Text(ErrorModel.error!)));
-  }
-
-
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-  void navigateToDocument(BuildContext context, String documentId){
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  // const HomeScreen({super.key});
+
+  void signOut(WidgetRef ref) {
+    ref.read(AuthRepositoryProvider).signOut();
+    ref.read(userProvider.notifier).update((state) => null);
+  }
+
+  void createDocument(WidgetRef ref, BuildContext ct) async {
+    String token = ref.read(userProvider)!.token;
+
+    final navigator = Routemaster.of(ct);
+    final snackBar = ScaffoldMessenger.of(ct);
+
+    final ErrorModel = await ref
+        .read(documentRepositoryProvider)
+        .createDocument(token);
+
+    if (ErrorModel.data != null) {
+      navigator.push('/document/${ErrorModel.data.id}');
+    } else {
+      snackBar.showSnackBar(SnackBar(content: Text(ErrorModel.error!)));
+    }
+  }
+
+  void navigateToDocument(BuildContext context, String documentId) {
     Routemaster.of(context).push('/document/$documentId');
   }
 
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) { 
-      return Scaffold(
-      
+  Widget build(BuildContext context) {
+    return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
-            GestureDetector( onTap: () {
-                    Routemaster.of(context).replace('/');
-                  }, child: Image.asset('assets/images/docs-logo.png', height: 50)),
-                  SizedBox(width: 8,),
-                   Text("My Documents", style:  GoogleFonts.roboto(fontSize: 15, ),),
+            GestureDetector(
+              onTap: () {
+                Routemaster.of(context).replace('/');
+              },
+              child: Image.asset('assets/images/docs-logo.png', height: 50),
+            ),
+            SizedBox(width: 8),
+            Text("My Documents", style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold)),
           ],
         ),
-      backgroundColor: kWhiteColor,
-      elevation: 0,
+        backgroundColor: kWhiteColor,
+        elevation: 0,
         actions: [
-          IconButton(onPressed: ()=> createDocument(ref, context), icon: Icon(Icons.add, color: kBlackColor, )),
-          IconButton(onPressed: ()=> signOut(ref), icon: Icon(Icons.logout, color: kRedColor,)),
-
+          IconButton(
+            onPressed: () => createDocument(ref, context),
+            icon: Icon(Icons.add, color: kBlackColor),
+          ),
+          IconButton(
+            onPressed: () => signOut(ref),
+            icon: Icon(Icons.logout, color: kRedColor),
+          ),
         ],
       ),
-      body: FutureBuilder<ErrorModel>(future: ref.watch(documentRepositoryProvider).getDocuments(ref.watch(userProvider)!.token),
-       builder: (context, snapshot) {
-         if(snapshot.connectionState  == ConnectionState.waiting){
+      body: FutureBuilder<ErrorModel>(
+        future: ref
+            .watch(documentRepositoryProvider)
+            .getDocuments(ref.watch(userProvider)!.token),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Loader();
-         }
+          }
 
-         return Container(
-          margin: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
-          width: 600,
-           child: 
-           GridView.builder(
-           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-             crossAxisCount: 3, // number of columns
-             crossAxisSpacing: 10,
-             mainAxisSpacing: 10,
-             childAspectRatio: 1, // makes cards square
-           ),
-           itemCount: snapshot.data!.data.length,
-           itemBuilder: (context, index) {
-             DocumentModel docc = snapshot.data!.data[index];
-
-               String formattedDate =
-        DateFormat('dd MMM yyyy, hh:mm a').format(docc.createdAt);
-
-             return InkWell(
-              borderRadius: BorderRadius.circular(15),
-               onTap: () => navigateToDocument(context, docc.id),
-               child: Card(
-                 elevation: 3,
-                 color: kWhiteColor,
-                 child: Padding(
-                   padding: const EdgeInsets.all(10),
-                   child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-         
-            /// Title (top-left)
-            Text(
-              docc.title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+            width: 600,
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, // number of columns
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 1, // makes cards square
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 4),
+              itemCount: snapshot.data!.data.length,
+              itemBuilder: (context, index) {
+                DocumentModel docc = snapshot.data!.data[index];
 
-              /// Created at line
-              Text(
-                formattedDate,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
-              ),
-            const Spacer(),
-         
-            /// Buttons (bottom-right)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-         
-                IconButton(
-                  icon: const Icon(Icons.share, size: 20),
-                  onPressed: () {
-                    // share logic
-                    Clipboard.setData(ClipboardData(text: 'http://localhost:3000/#/document/${docc.id}')).then((value) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("link copied")));
-                },);
-                  },
-                ),
-         
-                IconButton(
-                  icon: const Icon(Icons.delete, size: 20, color: Colors.red),
-                  onPressed: () {
-                    // delete logic
-                  },
-                ),
-              ],
+                String formattedDate = DateFormat(
+                  'dd MMM yyyy, hh:mm a',
+                ).format(docc.createdAt);
+
+                return InkWell(
+                  borderRadius: BorderRadius.circular(15),
+                  onTap: () => navigateToDocument(context, docc.id),
+                  child: Card(
+                    elevation: 3,
+                    color: kWhiteColor,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// Title (top-left)
+                          Text(
+                            docc.title,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+
+                          /// Created at line
+                          Text(
+                            formattedDate,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          const Spacer(),
+
+                          /// Buttons (bottom-right)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.share, size: 20),
+                                onPressed: () {
+                                  // share logic
+                                  Clipboard.setData(
+                                    ClipboardData(
+                                      text:
+                                          'http://localhost:3000/#/document/${docc.id}',
+                                    ),
+                                  ).then((value) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("link copied")),
+                                    );
+                                  });
+                                },
+                              ),
+
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  size: 20,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () async {
+                                  bool? confirm = await showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text("Delete Document"),
+                                        content: const Text(
+                                          "Are you sure you want to delete this document?",
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed:
+                                                () => Navigator.pop(
+                                                  context,
+                                                  false,
+                                                ),
+                                            child: const Text("Cancel"),
+                                          ),
+
+                                          TextButton(
+                                            onPressed:
+                                                () => Navigator.pop(
+                                                  context,
+                                                  true,
+                                                ),
+                                            child: const Text("Delete"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+
+                                  if (confirm == true) {
+                                    await ref
+                                        .read(documentRepositoryProvider)
+                                        .deleteDocument(
+                                          token: ref.read(userProvider)!.token,
+                                          id: docc.id,
+                                        );
+
+                                    setState(() {
+                                      snapshot.data!.data.removeAt(index);
+                                    });
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-          ],
-                   ),
-                 ),
-               ),
-             );
-           },
-         )
-           
-         
-         
-         
-         
-          //  ListView.builder(itemBuilder: (context, index) {
-          //    DocumentModel docc = snapshot.data!.data[index];
-           
-          //    return InkWell(
-          //     onTap: () =>navigateToDocument(context, docc.id),
-          //      child: SizedBox(
-          //       height: 50,
-          //        child: Card(
-          //         child: Center(child: Text(docc.title, style: TextStyle(fontSize: 17),),),
-          //        ),
-          //      ),
-          //    );
-          //  }, itemCount: snapshot.data!.data.length,),
-         
-         
-         
-         
-         );
-       },),
+
+            //  ListView.builder(itemBuilder: (context, index) {
+            //    DocumentModel docc = snapshot.data!.data[index];
+
+            //    return InkWell(
+            //     onTap: () =>navigateToDocument(context, docc.id),
+            //      child: SizedBox(
+            //       height: 50,
+            //        child: Card(
+            //         child: Center(child: Text(docc.title, style: TextStyle(fontSize: 17),),),
+            //        ),
+            //      ),
+            //    );
+            //  }, itemCount: snapshot.data!.data.length,),
+          );
+        },
+      ),
     );
   }
 }
-
