@@ -1,16 +1,40 @@
-# docu_sync
+# DocuSync
 
-A new Flutter project.
+**DocuSync** is a real-time collaborative platform enabling document editing, file sharing, and Chatting. Built using Flutter (frontend), Node.js (backend), MongoDB (database). It leverages Socket.IO for real-time communication and JWT-based authentication for secure access.
 
-## Getting Started
+## 🚀 Features
 
-This project is a starting point for a Flutter application.
+- 📄 **Real-time Document Editing**  
+  Collaborate with multiple users on the same document with live updates.
 
-A few resources to get you started if this is your first Flutter project:
+- 📁 **File Sharing**  
+  Share files instantly with other participants in a session.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- 💬 **Chatting**  
+  Seamless real time chatting between users.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- 🔄 **Live Synchronization**  
+  Utilizes Socket.IO to synchronize data instantly between clients.
+
+- 🔐 **Secure Sessions**  
+  JWT-based authentication and authorization ensure user identity and session integrity.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer        | Technology                         |
+|--------------|------------------------------------|
+| Frontend     | Flutter                            |
+| Backend      | Node.js, Express.js                |
+| Database     | MongoDB                            |
+| Realtime     | Socket.IO                          |
+| Auth         | JWT (JSON Web Tokens)              |
+
+---
+## Backend Architecture Overview
+
+### Socket.IO
+- Used for all real-time interactions, including document edits, file transfers, and call signaling.
+
+---
