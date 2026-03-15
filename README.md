@@ -2,6 +2,21 @@
 
 **DocuSync** is a real-time collaborative platform enabling document editing, file sharing, and Chatting. Built using Flutter (frontend), Node.js (backend), MongoDB (database). It leverages Socket.IO for real-time communication and JWT-based authentication for secure access.
 
+
+<table>
+  <tr>
+    <td><img src="assets/screenshots/login screen.png" width="500"/></td>
+    <td><img src="assets/screenshots/home screen.png" width="500"/></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/document screen.png" width="500"/></td>
+    <td><img src="assets/screenshots//file share screen.png" width="500"/></td>
+  </tr>
+</table>
+
+---
+
+
 ## 🚀 Features
 
 - 📄 **Real-time Document Editing**  
