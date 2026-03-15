@@ -48,16 +48,32 @@ void dispose() {
     socketRepository.joinRoom(widget.id);
     fetchDocData();
 
-    socketRepository.changeListner((da) {
-      print("lisitng somehting");
-      _controller?.compose(
-        //added list from 
-        Delta.fromJson(da['delta']),
-        _controller?.selection ?? const TextSelection.collapsed(offset: 0),
-        quill.ChangeSource.remote,
-      );
-    });
+    // socketRepository.changeListner((da) {
+    //   print("lisitng somehting");
+    //   _controller?.compose(
+    //     //added list from 
+    //     Delta.fromJson(da['delta']),
+    //     _controller?.selection ?? const TextSelection.collapsed(offset: 0),
+    //     quill.ChangeSource.remote,
+    //   );
+    // });
 
+
+  socketRepository.changeListner((da) {
+  if (_controller == null) return;
+
+  try {
+    final delta = Delta.fromJson(List.from(da['delta']));
+
+    _controller!.compose(
+      delta,
+      _controller!.selection,
+      quill.ChangeSource.remote,
+    );
+  } catch (e) {
+    print("Delta error: $e");
+  }
+});
 
 
 
@@ -95,8 +111,8 @@ void dispose() {
             (err!.data as DocumentModel).content.isEmpty
                 ? quill.Document()
                 : quill.Document.fromDelta(Delta.fromJson(
-                  (err!.data as DocumentModel).content
-                  // List.from((err!.data as DocumentModel).content),
+                  // (err!.data as DocumentModel).content
+                  List.from((err!.data as DocumentModel).content),
                   )),
       );
       setState(() {});
